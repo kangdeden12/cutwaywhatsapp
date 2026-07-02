@@ -1,0 +1,36 @@
+version: "3.9"
+
+# Docker Compose ini untuk PENGEMBANGAN LOKAL saja.
+# Untuk produksi, gunakan managed database (AWS RDS / Cloud SQL) sesuai Artefak 05.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: cutwaywhatsapp_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: cutway
+      POSTGRES_PASSWORD: cutway_dev_password
+      POSTGRES_DB: cutwaywhatsapp
+    ports:
+      - "5432:5432"
+    volumes:
+      - cutway_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cutway"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: cutwaywhatsapp_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - cutway_redis_data:/data
+
+volumes:
+  cutway_pg_data:
+  cutway_redis_data:
